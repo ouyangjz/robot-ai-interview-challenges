@@ -2,7 +2,7 @@
 
 import math
 from numbers import Real
-from typing import Any, Dict, List
+from typing import List
 
 from .effects import farewell_effects, welcome_effects
 from .event_types import (
@@ -15,7 +15,7 @@ from .event_types import (
     PERSON_LEFT,
     TICK,
 )
-from .models import Effect, Event
+from .models import Effect, Event, Snapshot
 from .state import _ApplicationState
 
 
@@ -59,7 +59,7 @@ class RobotApplication:
 
         return []
 
-    def snapshot(self) -> Dict[str, Any]:
+    def snapshot(self) -> Snapshot:
         """Return an isolated, serializable view of current state.
 
         The returned dictionary is newly allocated and contains no mutable
