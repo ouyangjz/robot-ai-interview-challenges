@@ -46,26 +46,33 @@ class RobotApplicationTests(unittest.TestCase):
         self.assertEqual(outputs[7][0].value, "欢迎下次光临")
         self.assertEqual(outputs[9][0].value, "wave_hand")
 
-    def test_conversation_suppresses_welcome_without_replaying_it(self):
-        app = RobotApplication()
+    def test_conversation_and_meeting_suppress_welcome_without_replaying_it(self):
+        for interaction in ("CONVERSATION", "MEETING"):
+            with self.subTest(interaction=interaction):
+                app = RobotApplication()
 
-        self.assertEqual(app.handle_event(event("CONVERSATION_STARTED", 0)), [])
-        self.assertEqual(app.handle_event(event("PERSON_ENTERED", 1)), [])
-        self.assertEqual(app.handle_event(event("CONVERSATION_ENDED", 2)), [])
-        self.assertEqual(app.handle_event(event("PERSON_ENTERED", 3)), [])
+                self.assertEqual(app.handle_event(event(f"{interaction}_STARTED", 0)), [])
+                self.assertEqual(app.handle_event(event("PERSON_ENTERED", 1)), [])
+                self.assertEqual(app.handle_event(event(f"{interaction}_ENDED", 2)), [])
+                self.assertEqual(app.handle_event(event("PERSON_ENTERED", 3)), [])
 
-    def test_meeting_suppresses_due_farewell_without_replaying_it(self):
-        app = RobotApplication()
-        app.handle_event(event("PERSON_ENTERED", 0))
-        app.handle_event(event("PERSON_LEFT", 1))
+    def test_conversation_and_meeting_suppress_farewell_without_replaying_it(self):
+        for interaction in ("CONVERSATION", "MEETING"):
+            with self.subTest(interaction=interaction):
+                app = RobotApplication()
+                app.handle_event(event("PERSON_ENTERED", 0))
+                app.handle_event(event("PERSON_LEFT", 1))
 
-        self.assertEqual(app.handle_event(event("MEETING_STARTED", 2)), [])
-        self.assertEqual(app.handle_event(event("TICK", 11)), [])
-        self.assertEqual(app.handle_event(event("MEETING_ENDED", 12)), [])
-        self.assertEqual(app.handle_event(event("TICK", 13)), [])
+                self.assertEqual(app.handle_event(event(f"{interaction}_STARTED", 2)), [])
+                self.assertEqual(app.handle_event(event("TICK", 11)), [])
+                self.assertEqual(app.handle_event(event(f"{interaction}_ENDED", 12)), [])
+                self.assertEqual(app.handle_event(event("TICK", 13)), [])
 
-        effects = app.handle_event(event("PERSON_ENTERED", 14))
-        self.assertEqual([effect.value for effect in effects], ["wave_hand", "欢迎光临"])
+                effects = app.handle_event(event("PERSON_ENTERED", 14))
+                self.assertEqual(
+                    [effect.value for effect in effects],
+                    ["wave_hand", "欢迎光临"],
+                )
 
     def test_conversation_and_meeting_are_independent_suppression_states(self):
         app = RobotApplication()
