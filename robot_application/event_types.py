@@ -1,0 +1,23 @@
+"""Event names accepted by :class:`RobotApplication`."""
+
+from typing import FrozenSet
+
+PERSON_ENTERED = "PERSON_ENTERED"
+PERSON_LEFT = "PERSON_LEFT"
+CONVERSATION_STARTED = "CONVERSATION_STARTED"
+CONVERSATION_ENDED = "CONVERSATION_ENDED"
+MEETING_STARTED = "MEETING_STARTED"
+MEETING_ENDED = "MEETING_ENDED"
+TICK = "TICK"
+
+ALL_EVENT_TYPES: FrozenSet[str] = frozenset(
+    {
+        PERSON_ENTERED,
+        PERSON_LEFT,
+        CONVERSATION_STARTED,
+        CONVERSATION_ENDED,
+        MEETING_STARTED,
+        MEETING_ENDED,
+        TICK,
+    }
+)
